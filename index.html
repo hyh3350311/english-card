@@ -97,6 +97,9 @@ function showToast(msg){
   clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("show")},2000);
 }
 
+var speechRate=0.8;
+var audioReady=false;
+
 function updateSpeed(v){
   speechRate=parseFloat(v);
   document.getElementById("speedVal").textContent=v+"x";
