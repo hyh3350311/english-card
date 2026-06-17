@@ -85,6 +85,32 @@ var QUIZ = [{"q": "🔴 这个颜色用英语怎么说？", "opts": ["red", "blu
 var STORAGE_KEY = "summer_english_progress";
 var AUDIO_MAP={"A": "audio/A.mp3", "B": "audio/B.mp3", "C": "audio/C.mp3", "D": "audio/D.mp3", "E": "audio/E.mp3", "F": "audio/F.mp3", "G": "audio/G.mp3", "H": "audio/H.mp3", "I": "audio/I.mp3", "J": "audio/J.mp3", "K": "audio/K.mp3", "L": "audio/L.mp3", "M": "audio/M.mp3", "N": "audio/N.mp3", "O": "audio/O.mp3", "P": "audio/P.mp3", "Q": "audio/Q.mp3", "R": "audio/R.mp3", "S": "audio/S.mp3", "T": "audio/T.mp3", "U": "audio/U.mp3", "V": "audio/V.mp3", "W": "audio/W.mp3", "X": "audio/X.mp3", "Y": "audio/Y.mp3", "Z": "audio/Z.mp3", "red": "audio/red.mp3", "blue": "audio/blue.mp3", "yellow": "audio/yellow.mp3", "green": "audio/green.mp3", "white": "audio/white.mp3", "black": "audio/black.mp3", "pink": "audio/pink.mp3", "orange": "audio/orange.mp3", "cat": "audio/cat.mp3", "dog": "audio/dog.mp3", "pig": "audio/pig.mp3", "cow": "audio/cow.mp3", "sheep": "audio/sheep.mp3", "bird": "audio/bird.mp3", "fish": "audio/fish.mp3", "elephant": "audio/elephant.mp3", "chicken": "audio/chicken.mp3", "rabbit": "audio/rabbit.mp3", "apple": "audio/apple.mp3", "banana": "audio/banana.mp3", "egg": "audio/egg.mp3", "milk": "audio/milk.mp3", "bread": "audio/bread.mp3", "cake": "audio/cake.mp3", "hamburger": "audio/hamburger.mp3", "head": "audio/head.mp3", "eye": "audio/eye.mp3", "ear": "audio/ear.mp3", "nose": "audio/nose.mp3", "mouth": "audio/mouth.mp3", "hand": "audio/hand.mp3", "foot": "audio/foot.mp3", "one": "audio/one.mp3", "two": "audio/two.mp3", "three": "audio/three.mp3", "four": "audio/four.mp3", "five": "audio/five.mp3", "six": "audio/six.mp3", "seven": "audio/seven.mp3", "eight": "audio/eight.mp3", "nine": "audio/nine.mp3", "ten": "audio/ten.mp3", "book": "audio/book.mp3", "pencil": "audio/pencil.mp3", "bag": "audio/bag.mp3", "teacher": "audio/teacher.mp3", "student": "audio/student.mp3", "desk": "audio/desk.mp3", "This is my cat.": "audio/s0.mp3", "I like red.": "audio/s1.mp3", "I see a big dog.": "audio/s2.mp3", "I see an apple.": "audio/s3.mp3", "This is my mother.": "audio/s4.mp3", "I am happy.": "audio/s5.mp3", "I have a ball.": "audio/s6.mp3", "I am seven.": "audio/s7.mp3", "I like red and blue.": "audio/s8.mp3", "I have a dog.": "audio/s9.mp3", "Can I have an apple?": "audio/s10.mp3", "What is this?": "audio/s11.mp3", "Thank you!": "audio/s12.mp3", "Good morning!": "audio/s13.mp3", "I can run.": "audio/s14.mp3", "The book is on the desk.": "audio/s15.mp3", "It is sunny today.": "audio/s16.mp3", "What is your name?": "audio/s17.mp3", "My name is Lily.": "audio/s18.mp3", "I can sing and dance.": "audio/s19.mp3", "答对了！": "audio/correct.mp3", "再试一次！": "audio/tryagain.mp3"};
 
+function loadProgress(){
+  try{var r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):{letters:{},words:{},sentences:{},quizBest:0}}
+  catch(e){return {letters:{},words:{},sentences:{},quizBest:0}}
+}
+function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+var progress=loadProgress();
+
+function showToast(msg){
+  var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("show")},2000);
+}
+
+function updateSpeed(v){
+  speechRate=parseFloat(v);
+  document.getElementById("speedVal").textContent=v+"x";
+  try{localStorage.setItem("speechRate",v)}catch(e){}
+}
+function warmupAudio(){
+  audioReady=true;
+}
+(function(){
+  try{var sv=localStorage.getItem("speechRate");if(sv){speechRate=parseFloat(sv);
+  var sl=document.getElementById("speedSlider");if(sl)sl.value=speechRate;
+  var sv2=document.getElementById("speedVal");if(sv2)sv2.textContent=speechRate+"x"}}catch(e){}
+})();
+
 function speak(text){
   var src=AUDIO_MAP[text];
   if(!src){
@@ -179,6 +205,7 @@ function switchTab(name){
 }
 
 function renderLetters(){
+
   var g=document.getElementById("letterGrid");g.innerHTML="";
   LETTERS.forEach(function(l){
     var d=document.createElement("div");
