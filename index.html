@@ -83,65 +83,24 @@ var WORD_CATEGORIES = [{"name": "颜色 Colors", "words": [{"en": "red", "cn": "
 var SENTENCES = [{"en": "This is my cat.", "cn": "这是我的猫。"}, {"en": "I like red.", "cn": "我喜欢红色。"}, {"en": "I see a big dog.", "cn": "我看见一只大狗。"}, {"en": "I see an apple.", "cn": "我看到一个苹果。"}, {"en": "This is my mother.", "cn": "这是我的妈妈。"}, {"en": "I am happy.", "cn": "我很开心。"}, {"en": "I have a ball.", "cn": "我有一个球。"}, {"en": "I am seven.", "cn": "我七岁了。"}, {"en": "I like red and blue.", "cn": "我喜欢红色和蓝色。"}, {"en": "I have a dog.", "cn": "我有一只狗。"}, {"en": "Can I have an apple?", "cn": "我可以吃一个苹果吗？"}, {"en": "What is this?", "cn": "这是什么？"}, {"en": "Thank you!", "cn": "谢谢你！"}, {"en": "Good morning!", "cn": "早上好！"}, {"en": "I can run.", "cn": "我会跑步。"}, {"en": "The book is on the desk.", "cn": "书在桌子上。"}, {"en": "It is sunny today.", "cn": "今天天气晴朗。"}, {"en": "What is your name?", "cn": "你叫什么名字？"}, {"en": "My name is Lily.", "cn": "我的名字叫 Lily。"}, {"en": "I can sing and dance.", "cn": "我会唱歌和跳舞。"}];
 var QUIZ = [{"q": "🔴 这个颜色用英语怎么说？", "opts": ["red", "blue", "green"], "ans": 0}, {"q": "🐱 这个动物是？", "opts": ["dog", "cat", "bird"], "ans": 1}, {"q": "I ____ a student.", "opts": ["am", "is", "are"], "ans": 0}, {"q": "🍌 这个水果是？", "opts": ["apple", "orange", "banana"], "ans": 2}, {"q": "早上见到老师你说？", "opts": ["Goodbye!", "Good night!", "Good morning!"], "ans": 2}, {"q": "👀 这个身体部位是？", "opts": ["ear", "eye", "nose"], "ans": 1}, {"q": "别人帮你，你说？", "opts": ["Sorry!", "Hello!", "Thank you!"], "ans": 2}, {"q": "____ many books?", "opts": ["What", "How", "Where"], "ans": 1}, {"q": "🐶 英语是？", "opts": ["cat", "dog", "cow"], "ans": 1}, {"q": "I like ____（苹果）", "opts": ["apples", "bananas", "oranges"], "ans": 0}, {"q": "She ____ my friend.", "opts": ["am", "is", "are"], "ans": 1}, {"q": "🖐 英语是？", "opts": ["foot", "head", "hand"], "ans": 2}, {"q": "🥚 的首字母是？", "opts": ["A", "E", "O"], "ans": 1}, {"q": "I can ____（游泳）", "opts": ["run", "swim", "jump"], "ans": 1}, {"q": "Lily ____ not swim.", "opts": ["can", "is", "has"], "ans": 0}];
 var STORAGE_KEY = "summer_english_progress";
-
-function loadProgress(){
-  try{var r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):{letters:{},words:{},sentences:{},quizBest:0}}
-  catch(e){return {letters:{},words:{},sentences:{},quizBest:0}}
-}
-function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
-var progress=loadProgress();
-
-function showToast(msg){
-  var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
-  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("show")},2000);
-}
-
-var speechRate=0.8;
-function updateSpeed(v){
-  speechRate=parseFloat(v);
-  document.getElementById("speedVal").textContent=v+"x";
-  try{localStorage.setItem("speechRate",v)}catch(e){}
-}
-(function(){
-  try{var sv=localStorage.getItem("speechRate");if(sv){speechRate=parseFloat(sv);document.getElementById("speedSlider").value=speechRate;document.getElementById("speedVal").textContent=speechRate+"x"}}catch(e){}
-})();
+var AUDIO_MAP={"A": "audio/A.mp3", "B": "audio/B.mp3", "C": "audio/C.mp3", "D": "audio/D.mp3", "E": "audio/E.mp3", "F": "audio/F.mp3", "G": "audio/G.mp3", "H": "audio/H.mp3", "I": "audio/I.mp3", "J": "audio/J.mp3", "K": "audio/K.mp3", "L": "audio/L.mp3", "M": "audio/M.mp3", "N": "audio/N.mp3", "O": "audio/O.mp3", "P": "audio/P.mp3", "Q": "audio/Q.mp3", "R": "audio/R.mp3", "S": "audio/S.mp3", "T": "audio/T.mp3", "U": "audio/U.mp3", "V": "audio/V.mp3", "W": "audio/W.mp3", "X": "audio/X.mp3", "Y": "audio/Y.mp3", "Z": "audio/Z.mp3", "red": "audio/red.mp3", "blue": "audio/blue.mp3", "yellow": "audio/yellow.mp3", "green": "audio/green.mp3", "white": "audio/white.mp3", "black": "audio/black.mp3", "pink": "audio/pink.mp3", "orange": "audio/orange.mp3", "cat": "audio/cat.mp3", "dog": "audio/dog.mp3", "pig": "audio/pig.mp3", "cow": "audio/cow.mp3", "sheep": "audio/sheep.mp3", "bird": "audio/bird.mp3", "fish": "audio/fish.mp3", "elephant": "audio/elephant.mp3", "chicken": "audio/chicken.mp3", "rabbit": "audio/rabbit.mp3", "apple": "audio/apple.mp3", "banana": "audio/banana.mp3", "egg": "audio/egg.mp3", "milk": "audio/milk.mp3", "bread": "audio/bread.mp3", "cake": "audio/cake.mp3", "hamburger": "audio/hamburger.mp3", "head": "audio/head.mp3", "eye": "audio/eye.mp3", "ear": "audio/ear.mp3", "nose": "audio/nose.mp3", "mouth": "audio/mouth.mp3", "hand": "audio/hand.mp3", "foot": "audio/foot.mp3", "one": "audio/one.mp3", "two": "audio/two.mp3", "three": "audio/three.mp3", "four": "audio/four.mp3", "five": "audio/five.mp3", "six": "audio/six.mp3", "seven": "audio/seven.mp3", "eight": "audio/eight.mp3", "nine": "audio/nine.mp3", "ten": "audio/ten.mp3", "book": "audio/book.mp3", "pencil": "audio/pencil.mp3", "bag": "audio/bag.mp3", "teacher": "audio/teacher.mp3", "student": "audio/student.mp3", "desk": "audio/desk.mp3", "This is my cat.": "audio/s0.mp3", "I like red.": "audio/s1.mp3", "I see a big dog.": "audio/s2.mp3", "I see an apple.": "audio/s3.mp3", "This is my mother.": "audio/s4.mp3", "I am happy.": "audio/s5.mp3", "I have a ball.": "audio/s6.mp3", "I am seven.": "audio/s7.mp3", "I like red and blue.": "audio/s8.mp3", "I have a dog.": "audio/s9.mp3", "Can I have an apple?": "audio/s10.mp3", "What is this?": "audio/s11.mp3", "Thank you!": "audio/s12.mp3", "Good morning!": "audio/s13.mp3", "I can run.": "audio/s14.mp3", "The book is on the desk.": "audio/s15.mp3", "It is sunny today.": "audio/s16.mp3", "What is your name?": "audio/s17.mp3", "My name is Lily.": "audio/s18.mp3", "I can sing and dance.": "audio/s19.mp3", "答对了！": "audio/correct.mp3", "再试一次！": "audio/tryagain.mp3"};
 
 function speak(text){
-  var isCN=/[\u4e00-\u9fff]/.test(text);
-  var lang=isCN?"zh":"en";
-  // Try SpeechSynthesis first
-  if("speechSynthesis" in window){
-    try{
-      window.speechSynthesis.cancel();
-      var u=new SpeechSynthesisUtterance(text);
-      u.lang=isCN?"zh-CN":"en-US";u.rate=speechRate;u.pitch=1.1;
-      var voices=window.speechSynthesis.getVoices();
-      if(voices.length>0){
-        var v=voices.find(function(x){return x.lang.startsWith(lang)})||voices[0];
-        if(v)u.voice=v;
-        window.speechSynthesis.speak(u);
-        return;
-      }
-    }catch(e){}
+  var src=AUDIO_MAP[text];
+  if(!src){
+    var keys=Object.keys(AUDIO_MAP);
+    for(var i=0;i<keys.length;i++){
+      if(keys[i].toLowerCase()===text.toLowerCase()){src=AUDIO_MAP[keys[i]];break}
+    }
   }
-  // Fallback: Google TTS (works in WeChat, all mobile browsers)
-  googleTTS(text, lang);
-}
-
-// Cross-browser TTS using Google Translate audio
-function googleTTS(text, lang){
-  var a=document.getElementById("ttsAudio")||(function(){
-    var el=document.createElement("audio");el.id="ttsAudio";
+  if(!src){showToast("暂无此音频");return}
+  var a=document.getElementById("player")||(function(){
+    var el=document.createElement("audio");el.id="player";
     el.style.display="none";document.body.appendChild(el);return el;
   })();
-  var tl=lang==="zh"?"zh-CN":"en";
-  var url="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl="+tl+"&q="+encodeURIComponent(text);
-  a.src=url;
-  a.onerror=function(){
-    // Retry with alternate client
-    a.src="https://translate.google.com/translate_tts?ie=UTF-8&client=gtx&tl="+tl+"&q="+encodeURIComponent(text);
-  };
-  a.play().catch(function(){showToast("请先点击页面解锁音频")});
+  a.src=src;
+  a.playbackRate=speechRate;
+  a.play().catch(function(){showToast("点击页面解锁音频")});
 }
 if("speechSynthesis" in window){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=function(){window.speechSynthesis.getVoices()}}
 
