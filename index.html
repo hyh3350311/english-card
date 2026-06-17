@@ -107,13 +107,41 @@ function updateSpeed(v){
 })();
 
 function speak(text){
-  if(!("speechSynthesis" in window)){showToast("浏览器不支持语音朗读，请用Chrome/Edge打开");return}
-  window.speechSynthesis.cancel();
-  var u=new SpeechSynthesisUtterance(text);u.lang=/[\u4e00-\u9fff]/.test(text)?"zh-CN":"en-US";u.rate=speechRate;u.pitch=1.1;
-  var voices=window.speechSynthesis.getVoices();
-  var v=voices.find(function(x){return x.lang.startsWith(/[\u4e00-\u9fff]/.test(text)?"zh":"en")})||voices[0];
-  if(v)u.voice=v;
-  window.speechSynthesis.speak(u);
+  var isCN=/[\u4e00-\u9fff]/.test(text);
+  var lang=isCN?"zh":"en";
+  // Try SpeechSynthesis first
+  if("speechSynthesis" in window){
+    try{
+      window.speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance(text);
+      u.lang=isCN?"zh-CN":"en-US";u.rate=speechRate;u.pitch=1.1;
+      var voices=window.speechSynthesis.getVoices();
+      if(voices.length>0){
+        var v=voices.find(function(x){return x.lang.startsWith(lang)})||voices[0];
+        if(v)u.voice=v;
+        window.speechSynthesis.speak(u);
+        return;
+      }
+    }catch(e){}
+  }
+  // Fallback: Google TTS (works in WeChat, all mobile browsers)
+  googleTTS(text, lang);
+}
+
+// Cross-browser TTS using Google Translate audio
+function googleTTS(text, lang){
+  var a=document.getElementById("ttsAudio")||(function(){
+    var el=document.createElement("audio");el.id="ttsAudio";
+    el.style.display="none";document.body.appendChild(el);return el;
+  })();
+  var tl=lang==="zh"?"zh-CN":"en";
+  var url="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl="+tl+"&q="+encodeURIComponent(text);
+  a.src=url;
+  a.onerror=function(){
+    // Retry with alternate client
+    a.src="https://translate.google.com/translate_tts?ie=UTF-8&client=gtx&tl="+tl+"&q="+encodeURIComponent(text);
+  };
+  a.play().catch(function(){showToast("请先点击页面解锁音频")});
 }
 if("speechSynthesis" in window){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=function(){window.speechSynthesis.getVoices()}}
 
