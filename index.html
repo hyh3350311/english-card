@@ -1,0 +1,313 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>暑假英语小达人</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+header{width:100%;background:rgba(255,255,255,0.95);padding:12px 20px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.1)}
+header h1{font-size:24px;color:#5b2d8e}header p{font-size:13px;color:#888;margin-top:2px}
+nav{width:100%;max-width:700px;margin:16px auto 0;display:flex;gap:6px;padding:0 12px;flex-wrap:wrap;justify-content:center}
+nav button{flex:1;min-width:80px;padding:10px 8px;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:bold;background:rgba(255,255,255,0.25);color:#fff;transition:all .2s}
+nav button:hover{background:rgba(255,255,255,0.4);transform:translateY(-2px)}
+nav button.active{background:#fff;color:#5b2d8e;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+main{width:100%;max-width:700px;flex:1;padding:16px 12px}
+.section{display:none}.section.active{display:block}
+.letter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:10px}
+.letter-card{background:#fff;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.08);transition:all .2s;user-select:none;position:relative}
+.letter-card:hover{transform:scale(1.08);box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.letter-card .big{font-size:36px;font-weight:bold;color:#5b2d8e}
+.letter-card .small{font-size:18px;color:#999}
+.letter-card .sound{font-size:11px;color:#aaa;margin-top:2px}
+.letter-card.learned{border:3px solid #4caf50}
+.category-title{color:#fff;font-size:16px;margin:16px 0 8px;padding-left:4px}
+.word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+.word-card{background:#fff;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.08);transition:all .2s;user-select:none}
+.word-card:hover{transform:scale(1.05)}
+.word-card .emoji{font-size:40px}.word-card .en{font-size:16px;font-weight:bold;color:#333;margin-top:4px}.word-card .cn{font-size:12px;color:#999}
+.sentence-card{background:#fff;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.sentence-card .s-text{font-size:20px;color:#333;margin-bottom:8px;font-style:italic}
+.sentence-card .s-cn{font-size:13px;color:#888;margin-bottom:12px}
+.sentence-card .s-actions{display:flex;gap:8px;flex-wrap:wrap}
+.sentence-card .s-actions button{padding:8px 16px;border:none;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;transition:all .2s}
+.btn-speak{background:#667eea;color:#fff}
+.btn-record{background:#f44336;color:#fff}.btn-record.recording{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.btn-done{background:#4caf50;color:#fff}
+.quiz-card{background:#fff;border-radius:16px;padding:24px;margin-bottom:12px;box-shadow:0 3px 10px rgba(0,0,0,.08);text-align:center}
+.quiz-card .q-prompt{font-size:18px;color:#333;margin-bottom:16px}
+.quiz-card .q-options{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.quiz-card .q-options button{padding:12px 24px;border:2px solid #ddd;border-radius:12px;cursor:pointer;font-size:16px;background:#fff;transition:all .2s;min-width:80px}
+.quiz-card .q-options button:hover{border-color:#667eea;background:#f0f2ff}
+.quiz-card .q-options button.correct{border-color:#4caf50;background:#e8f5e9;color:#4caf50}
+.quiz-card .q-options button.wrong{border-color:#f44336;background:#ffebee;color:#f44336}
+.quiz-score{color:#fff;font-size:18px;text-align:center;margin:12px 0}
+.progress-box{background:#fff;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.progress-box h3{font-size:16px;color:#5b2d8e;margin-bottom:12px}
+.progress-bar-outer{height:24px;background:#e0e0e0;border-radius:12px;overflow:hidden;margin-bottom:8px}
+.progress-bar-inner{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:12px;transition:width .5s}
+.stat-row{display:flex;justify-content:space-between;font-size:14px;color:#666;margin-top:4px}
+.action-btn{display:block;margin:20px auto;padding:12px 32px;background:#fff;color:#5b2d8e;border:none;border-radius:25px;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:all .2s}
+.action-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:25px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.speed-bar{width:100%;max-width:700px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.1);border-radius:0}
+.speed-bar label{color:#fff;font-size:13px;white-space:nowrap}
+.speed-bar input[type=range]{flex:1;accent-color:#fff;height:6px;cursor:pointer}
+.speed-bar .speed-val{color:#fff;font-size:13px;min-width:36px;text-align:center;font-weight:bold}
+footer{padding:16px;color:rgba(255,255,255,.6);font-size:12px;text-align:center}
+</style></head><body>
+<header><h1>暑假英语小达人</h1><p>点击卡片听发音 | 跟读练口语 | 进度自动保存</p></header>
+<nav>
+<button onclick="switchTab('letters')" class="active" id="tab-letters">字母</button>
+<button onclick="switchTab('words')" id="tab-words">单词</button>
+<button onclick="switchTab('sentences')" id="tab-sentences">句型</button>
+<button onclick="switchTab('quiz')" id="tab-quiz">测验</button>
+<button onclick="switchTab('progress')" id="tab-progress">记录</button>
+</nav>
+<div class="speed-bar">
+  <label>🐢 语速</label>
+  <input type="range" id="speedSlider" min="0.2" max="1.6" step="0.1" value="0.8" oninput="updateSpeed(this.value)">
+  <span class="speed-val" id="speedVal">0.8x</span>
+</div>
+<main>
+<div class="section active" id="sec-letters"><div class="letter-grid" id="letterGrid"></div></div>
+<div class="section" id="sec-words"><div id="wordCategories"></div></div>
+<div class="section" id="sec-sentences"><div id="sentenceList"></div></div>
+<div class="section" id="sec-quiz"><div class="quiz-score" id="quizScore">0 / 0</div><div id="quizArea"></div><button class="action-btn" onclick="resetQuiz()">重新测验</button></div>
+<div class="section" id="sec-progress"><div id="progressArea"></div><button class="action-btn" onclick="resetAll()">重置全部学习记录</button></div>
+</main><div class="toast" id="toast"></div>
+<footer>全部数据保存在本地浏览器 | 无需网络 | 打开即用</footer>
+<script>
+var LETTERS = [{"upper": "A", "lower": "a", "sound": "ei"}, {"upper": "B", "lower": "b", "sound": "bi"}, {"upper": "C", "lower": "c", "sound": "si"}, {"upper": "D", "lower": "d", "sound": "di"}, {"upper": "E", "lower": "e", "sound": "yi"}, {"upper": "F", "lower": "f", "sound": "ef"}, {"upper": "G", "lower": "g", "sound": "ji"}, {"upper": "H", "lower": "h", "sound": "eichi"}, {"upper": "I", "lower": "i", "sound": "ai"}, {"upper": "J", "lower": "j", "sound": "zhei"}, {"upper": "K", "lower": "k", "sound": "kei"}, {"upper": "L", "lower": "l", "sound": "el"}, {"upper": "M", "lower": "m", "sound": "em"}, {"upper": "N", "lower": "n", "sound": "en"}, {"upper": "O", "lower": "o", "sound": "ou"}, {"upper": "P", "lower": "p", "sound": "pi"}, {"upper": "Q", "lower": "q", "sound": "kiu"}, {"upper": "R", "lower": "r", "sound": "a"}, {"upper": "S", "lower": "s", "sound": "es"}, {"upper": "T", "lower": "t", "sound": "ti"}, {"upper": "U", "lower": "u", "sound": "you"}, {"upper": "V", "lower": "v", "sound": "wei"}, {"upper": "W", "lower": "w", "sound": "dabuliu"}, {"upper": "X", "lower": "x", "sound": "eks"}, {"upper": "Y", "lower": "y", "sound": "wai"}, {"upper": "Z", "lower": "z", "sound": "zei"}];
+var WORD_CATEGORIES = [{"name": "颜色 Colors", "words": [{"en": "red", "cn": "红色", "emoji": "🔴"}, {"en": "blue", "cn": "蓝色", "emoji": "🔵"}, {"en": "yellow", "cn": "黄色", "emoji": "🟡"}, {"en": "green", "cn": "绿色", "emoji": "🟢"}, {"en": "white", "cn": "白色", "emoji": "⚪"}, {"en": "black", "cn": "黑色", "emoji": "⚫"}, {"en": "pink", "cn": "粉色", "emoji": "🩷"}, {"en": "orange", "cn": "橙色", "emoji": "🟠"}]}, {"name": "动物 Animals", "words": [{"en": "cat", "cn": "猫", "emoji": "🐱"}, {"en": "dog", "cn": "狗", "emoji": "🐶"}, {"en": "pig", "cn": "猪", "emoji": "🐷"}, {"en": "cow", "cn": "牛", "emoji": "🐮"}, {"en": "sheep", "cn": "羊", "emoji": "🐑"}, {"en": "bird", "cn": "鸟", "emoji": "🐦"}, {"en": "fish", "cn": "鱼", "emoji": "🐟"}, {"en": "elephant", "cn": "大象", "emoji": "🐘"}, {"en": "chicken", "cn": "鸡", "emoji": "🐔"}, {"en": "rabbit", "cn": "兔子", "emoji": "🐰"}]}, {"name": "食物 Food", "words": [{"en": "apple", "cn": "苹果", "emoji": "🍎"}, {"en": "banana", "cn": "香蕉", "emoji": "🍌"}, {"en": "orange", "cn": "橙子", "emoji": "🍊"}, {"en": "egg", "cn": "鸡蛋", "emoji": "🥚"}, {"en": "milk", "cn": "牛奶", "emoji": "🥛"}, {"en": "bread", "cn": "面包", "emoji": "🍞"}, {"en": "cake", "cn": "蛋糕", "emoji": "🎂"}, {"en": "hamburger", "cn": "汉堡", "emoji": "🍔"}]}, {"name": "身体 Body", "words": [{"en": "head", "cn": "头", "emoji": "🤔"}, {"en": "eye", "cn": "眼睛", "emoji": "👀"}, {"en": "ear", "cn": "耳朵", "emoji": "👂"}, {"en": "nose", "cn": "鼻子", "emoji": "👃"}, {"en": "mouth", "cn": "嘴巴", "emoji": "👄"}, {"en": "hand", "cn": "手", "emoji": "🖐"}, {"en": "foot", "cn": "脚", "emoji": "🦶"}]}, {"name": "数字 Numbers", "words": [{"en": "one", "cn": "一", "emoji": "1"}, {"en": "two", "cn": "二", "emoji": "2"}, {"en": "three", "cn": "三", "emoji": "3"}, {"en": "four", "cn": "四", "emoji": "4"}, {"en": "five", "cn": "五", "emoji": "5"}, {"en": "six", "cn": "六", "emoji": "6"}, {"en": "seven", "cn": "七", "emoji": "7"}, {"en": "eight", "cn": "八", "emoji": "8"}, {"en": "nine", "cn": "九", "emoji": "9"}, {"en": "ten", "cn": "十", "emoji": "10"}]}, {"name": "学校 School", "words": [{"en": "book", "cn": "书", "emoji": "📖"}, {"en": "pencil", "cn": "铅笔", "emoji": "✏️"}, {"en": "bag", "cn": "书包", "emoji": "🎒"}, {"en": "teacher", "cn": "老师", "emoji": "👩‍🏫"}, {"en": "student", "cn": "学生", "emoji": "🧒"}, {"en": "desk", "cn": "桌子", "emoji": "🪑"}]}];
+var SENTENCES = [{"en": "This is my cat.", "cn": "这是我的猫。"}, {"en": "I like red.", "cn": "我喜欢红色。"}, {"en": "I see a big dog.", "cn": "我看见一只大狗。"}, {"en": "I see an apple.", "cn": "我看到一个苹果。"}, {"en": "This is my mother.", "cn": "这是我的妈妈。"}, {"en": "I am happy.", "cn": "我很开心。"}, {"en": "I have a ball.", "cn": "我有一个球。"}, {"en": "I am seven.", "cn": "我七岁了。"}, {"en": "I like red and blue.", "cn": "我喜欢红色和蓝色。"}, {"en": "I have a dog.", "cn": "我有一只狗。"}, {"en": "Can I have an apple?", "cn": "我可以吃一个苹果吗？"}, {"en": "What is this?", "cn": "这是什么？"}, {"en": "Thank you!", "cn": "谢谢你！"}, {"en": "Good morning!", "cn": "早上好！"}, {"en": "I can run.", "cn": "我会跑步。"}, {"en": "The book is on the desk.", "cn": "书在桌子上。"}, {"en": "It is sunny today.", "cn": "今天天气晴朗。"}, {"en": "What is your name?", "cn": "你叫什么名字？"}, {"en": "My name is Lily.", "cn": "我的名字叫 Lily。"}, {"en": "I can sing and dance.", "cn": "我会唱歌和跳舞。"}];
+var QUIZ = [{"q": "🔴 这个颜色用英语怎么说？", "opts": ["red", "blue", "green"], "ans": 0}, {"q": "🐱 这个动物是？", "opts": ["dog", "cat", "bird"], "ans": 1}, {"q": "I ____ a student.", "opts": ["am", "is", "are"], "ans": 0}, {"q": "🍌 这个水果是？", "opts": ["apple", "orange", "banana"], "ans": 2}, {"q": "早上见到老师你说？", "opts": ["Goodbye!", "Good night!", "Good morning!"], "ans": 2}, {"q": "👀 这个身体部位是？", "opts": ["ear", "eye", "nose"], "ans": 1}, {"q": "别人帮你，你说？", "opts": ["Sorry!", "Hello!", "Thank you!"], "ans": 2}, {"q": "____ many books?", "opts": ["What", "How", "Where"], "ans": 1}, {"q": "🐶 英语是？", "opts": ["cat", "dog", "cow"], "ans": 1}, {"q": "I like ____（苹果）", "opts": ["apples", "bananas", "oranges"], "ans": 0}, {"q": "She ____ my friend.", "opts": ["am", "is", "are"], "ans": 1}, {"q": "🖐 英语是？", "opts": ["foot", "head", "hand"], "ans": 2}, {"q": "🥚 的首字母是？", "opts": ["A", "E", "O"], "ans": 1}, {"q": "I can ____（游泳）", "opts": ["run", "swim", "jump"], "ans": 1}, {"q": "Lily ____ not swim.", "opts": ["can", "is", "has"], "ans": 0}];
+var STORAGE_KEY = "summer_english_progress";
+
+function loadProgress(){
+  try{var r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):{letters:{},words:{},sentences:{},quizBest:0}}
+  catch(e){return {letters:{},words:{},sentences:{},quizBest:0}}
+}
+function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+var progress=loadProgress();
+
+function showToast(msg){
+  var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("show")},2000);
+}
+
+var speechRate=0.8;
+function updateSpeed(v){
+  speechRate=parseFloat(v);
+  document.getElementById("speedVal").textContent=v+"x";
+  try{localStorage.setItem("speechRate",v)}catch(e){}
+}
+(function(){
+  try{var sv=localStorage.getItem("speechRate");if(sv){speechRate=parseFloat(sv);document.getElementById("speedSlider").value=speechRate;document.getElementById("speedVal").textContent=speechRate+"x"}}catch(e){}
+})();
+
+function speak(text){
+  if(!("speechSynthesis" in window)){showToast("浏览器不支持语音朗读，请用Chrome/Edge打开");return}
+  window.speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(text);u.lang=/[\u4e00-\u9fff]/.test(text)?"zh-CN":"en-US";u.rate=speechRate;u.pitch=1.1;
+  var voices=window.speechSynthesis.getVoices();
+  var v=voices.find(function(x){return x.lang.startsWith(/[\u4e00-\u9fff]/.test(text)?"zh":"en")})||voices[0];
+  if(v)u.voice=v;
+  window.speechSynthesis.speak(u);
+}
+if("speechSynthesis" in window){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=function(){window.speechSynthesis.getVoices()}}
+
+function startRecognition(cb){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast("浏览器不支持语音识别，请用Chrome打开localhost");return null}
+  var r=new SR();r.lang="en-US";r.interimResults=false;r.maxAlternatives=1;
+  r.continuous=false;
+  var done=false;
+  function finish(result){
+    if(done)return;done=true;
+    clearTimeout(timer);
+    try{r.stop()}catch(e){}
+    cb(result);
+  }
+  var timer=setTimeout(function(){
+    finish("__timeout__");
+  },8000);
+  r.onresult=function(e){finish(e.results[0][0].transcript.trim())};
+  r.onerror=function(e){if(e.error==="aborted"||e.error==="no-speech"){finish("__end__")}else{showToast("录音出错:"+e.error);finish(null)}};
+  r.onend=function(){finish("__end__")};
+  r.onnomatch=function(){showToast("没有识别到语音，请再试一次");finish(null)};
+  try{r.start()}catch(e){clearTimeout(timer);showToast("语音识别启动失败");finish(null)};
+  return r;
+}
+
+var micReady=false;
+function requestPermissions(){
+  var btn=document.getElementById("permBtn");
+  btn.disabled=true;btn.textContent="⏳ 授权中...";
+  
+  // Step 1: warm up speech synthesis
+  if("speechSynthesis" in window){
+    warmupAudio();
+    document.getElementById("permSpeak").textContent="✅ 已就绪";
+    document.getElementById("permSpeak").classList.remove("pending");
+  }else{
+    document.getElementById("permSpeak").textContent="❌ 不支持";
+  }
+  
+  // Step 2: request microphone
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      stream.getTracks().forEach(function(t){t.stop()});
+      micReady=true;
+      document.getElementById("permRecord").textContent="✅ 已就绪";
+      document.getElementById("permRecord").classList.remove("pending");
+      finishPermission();
+    }).catch(function(e){
+      document.getElementById("permRecord").textContent="⚠️ 被拒绝";
+      document.getElementById("permRecord").classList.remove("pending");
+      finishPermission();
+    });
+  }else{
+    document.getElementById("permRecord").textContent="❌ 不支持";
+    finishPermission();
+  }
+}
+function finishPermission(){
+  var btn=document.getElementById("permBtn");
+  btn.disabled=false;btn.textContent="🎉 开始学习！";
+  btn.onclick=function(){
+    document.getElementById("permOverlay").style.display="none";
+    // Warm up audio context on user click
+    if("speechSynthesis" in window)warmupAudio();
+  };
+}
+
+function switchTab(name){
+  document.querySelectorAll(".section").forEach(function(s){s.classList.remove("active")});
+  document.querySelectorAll("nav button").forEach(function(b){b.classList.remove("active")});
+  document.getElementById("sec-"+name).classList.add("active");
+  document.getElementById("tab-"+name).classList.add("active");
+  if(name==="progress")renderProgress();
+  if(name==="quiz")renderQuiz();
+}
+
+function renderLetters(){
+  var g=document.getElementById("letterGrid");g.innerHTML="";
+  LETTERS.forEach(function(l){
+    var d=document.createElement("div");
+    d.className="letter-card"+(progress.letters[l.upper]?" learned":"");
+    d.innerHTML='<div class="big">'+l.upper+l.lower+'</div><div class="sound">'+l.sound+'</div>';
+    d.title="点击听发音";
+    d.onclick=function(){speak(l.upper);progress.letters[l.upper]=true;saveProgress(progress);d.classList.add("learned")};
+    g.appendChild(d);
+  });
+}
+
+function renderWords(){
+  var c=document.getElementById("wordCategories");c.innerHTML="";
+  WORD_CATEGORIES.forEach(function(cat){
+    var t=document.createElement("div");t.className="category-title";t.textContent=cat.name;c.appendChild(t);
+    var g=document.createElement("div");g.className="word-grid";
+    cat.words.forEach(function(w){
+      var d=document.createElement("div");d.className="word-card";
+      d.innerHTML='<div class="emoji">'+w.emoji+'</div><div class="en">'+w.en+'</div><div class="cn">'+w.cn+'</div>';
+      d.onclick=function(){speak(w.en);var k=w.en;if(!progress.words[k])progress.words[k]=0;progress.words[k]++;saveProgress(progress)};
+      g.appendChild(d);
+    });
+    c.appendChild(g);
+  });
+}
+
+function renderSentences(){
+  var c=document.getElementById("sentenceList");c.innerHTML="";
+  SENTENCES.forEach(function(s,i){
+    var d=document.createElement("div");d.className="sentence-card";
+    var done=progress.sentences[s.en]&&progress.sentences[s.en].done;
+    d.innerHTML='<div class="s-text">'+s.en+'</div><div class="s-cn">'+s.cn+'</div>'+
+      '<div class="s-actions">'+
+      '<button class="btn-speak" data-idx="'+i+'">🔊 听发音</button>'+
+      '<button class="btn-record" data-idx="'+i+'">🎤 跟读录音</button>'+
+      '<button class="btn-done" data-idx="'+i+'">'+(done?'✅ 已掌握':'✅ 已学会')+'</button>'+
+      '</div>';
+    d.querySelector(".btn-speak").onclick=function(e){e.stopPropagation();speak(s.en)};
+    d.querySelector(".btn-record").onclick=function(e){
+      e.stopPropagation();var btn=this;
+      if(btn.classList.contains("recording"))return;
+      btn.classList.add("recording");btn.textContent="🎤 正在听...";
+      startRecognition(function(result){
+        btn.classList.remove("recording");btn.textContent="🎤 跟读录音";
+        if(result==="__timeout__"){
+          showToast("录音超时，请点击按钮重新尝试");
+        }else if(result==="__end__"){
+          showToast("录音结束，未检测到语音");
+        }else if(result){
+          showToast("你说的是: "+result);
+          if(!progress.sentences[s.en])progress.sentences[s.en]={count:0,lastTry:""};
+          progress.sentences[s.en].count++;progress.sentences[s.en].lastTry=result;saveProgress(progress);
+        }
+      });
+    };
+    d.querySelector(".btn-done").onclick=function(e){
+      e.stopPropagation();
+      if(!progress.sentences[s.en])progress.sentences[s.en]={count:0,lastTry:""};
+      progress.sentences[s.en].count++;progress.sentences[s.en].done=true;saveProgress(progress);
+      d.querySelector(".btn-done").textContent="✅ 已掌握";
+      showToast("👍 真棒！已标记为学会");
+    };
+    c.appendChild(d);
+  });
+}
+
+var quizState={current:0,score:0,answered:false};
+function renderQuiz(){
+  quizState={current:0,score:0,answered:false};renderQuizQ();
+}
+function renderQuizQ(){
+  var a=document.getElementById("quizArea");
+  var s=document.getElementById("quizScore");
+  s.textContent=quizState.score+" / "+quizState.current;
+  if(quizState.current>=QUIZ.length){
+    var msg=quizState.score>=12?"太厉害了！英语小达人！":quizState.score>=8?"很不错，继续加油！":"还需要多练习哦！";
+    a.innerHTML='<div class="quiz-card"><div class="q-prompt" style="font-size:24px;">🎉 测验完成！</div><div style="font-size:36px;color:#5b2d8e;margin:12px 0;">'+quizState.score+' / '+QUIZ.length+'</div><p style="color:#888;">'+msg+'</p></div>';
+    s.textContent=quizState.score+" / "+QUIZ.length;
+    if(quizState.score>progress.quizBest){progress.quizBest=quizState.score;saveProgress(progress)}
+    return;
+  }
+  var q=QUIZ[quizState.current];quizState.answered=false;
+  a.innerHTML='<div class="quiz-card"><div class="q-prompt">第'+(quizState.current+1)+'题：'+q.q+'</div><div class="q-options">'+
+    q.opts.map(function(o,i){return '<button onclick="answerQuiz('+i+')">'+o+'</button>'}).join("")+'</div></div>';
+}
+function answerQuiz(idx){
+  if(quizState.answered)return;
+  var q=QUIZ[quizState.current];
+  var btns=document.querySelectorAll(".q-options button");
+  if(idx===q.ans){
+    btns[idx].classList.add("correct");quizState.score++;quizState.answered=true;
+    speak("答对了！");quizState.current++;setTimeout(renderQuizQ,1500);
+  }else{
+    btns[idx].classList.add("wrong");speak("再试一次！");
+    setTimeout(function(){btns[idx].classList.remove("wrong")},800);
+  }
+}
+function resetQuiz(){renderQuiz()}
+
+function renderProgress(){
+  progress=loadProgress();
+  var a=document.getElementById("progressArea");
+  var ll=Object.keys(progress.letters).length;
+  var wp=Object.keys(progress.words).length;
+  var sp=Object.keys(progress.sentences).filter(function(k){return progress.sentences[k].done}).length;
+  a.innerHTML=
+    '<div class="progress-box"><h3>🔤 字母学习</h3><div class="progress-bar-outer"><div class="progress-bar-inner" style="width:'+(ll/26*100)+'%"></div></div><div class="stat-row"><span>已学 '+ll+' 个</span><span>共 26 个</span></div></div>'+
+    '<div class="progress-box"><h3>📖 单词练习</h3><div class="progress-bar-outer"><div class="progress-bar-inner" style="width:'+Math.min(wp/48*100,100)+'%"></div></div><div class="stat-row"><span>已练 '+wp+' 个</span><span>共 48 个</span></div></div>'+
+    '<div class="progress-box"><h3>📝 句型掌握</h3><div class="progress-bar-outer"><div class="progress-bar-inner" style="width:'+(sp/20*100)+'%"></div></div><div class="stat-row"><span>已掌握 '+sp+' 句</span><span>共 20 句</span></div></div>'+
+    '<div class="progress-box"><h3>🎯 测验最高分</h3><div style="font-size:32px;color:#5b2d8e;text-align:center;">'+progress.quizBest+' / '+QUIZ.length+'</div></div>';
+}
+
+function resetAll(){
+  if(confirm("确定要清除全部学习记录吗？")){localStorage.removeItem(STORAGE_KEY);progress=loadProgress();renderLetters();renderWords();renderSentences();renderProgress();showToast("已清除")}
+}
+
+renderLetters();renderWords();renderSentences();
+</script>
+</body></html>
